@@ -1,0 +1,324 @@
+
+#include <stdio.h>
+#include <string.h>
+
+// Structure to store bus pass details of each student
+struct BusPass
+{
+    int id;         
+    char name[30];  
+    char route[40]; 
+    int validity;   
+};
+
+int main(void)
+{
+    struct BusPass s[50];
+    int count = 0;  
+    int choice;      
+    int i;           
+    int id;          
+    int found;       
+    int routeChoice; 
+    int days;        
+
+    do
+    {
+        printf("\n\n--- BUS PASS MANAGEMENT SYSTEM ---");
+        printf("\n1. Student Registration");
+        printf("\n2. Generate Bus Pass");
+        printf("\n3. Route Selection");
+        printf("\n4. Check Pass Validity");
+        printf("\n5. Renew Pass");
+        printf("\n6. Display All Students");
+        printf("\n7. Exit");
+        printf("\nEnter your choice: ");
+
+        if (scanf("%d", &choice) != 1)
+        {
+            printf("\nInvalid input! Please enter a number.\n");
+            while (getchar() != '\n')
+                ;
+            choice = 0;
+            continue;
+        }
+
+        switch (choice)
+        {
+        case 1:
+            // Student registration
+            if (count >= 50)
+            {
+                printf("\nRegistration limit reached!");
+                break;
+            }
+
+            s[count].id = count + 1;
+
+            printf("\nEnter student name: ");
+            while (getchar() != '\n')
+                ;
+
+            if (fgets(s[count].name,
+                      sizeof(s[count].name), stdin) == NULL)
+            {
+                printf("\nUnable to read name!");
+                break;
+            }
+
+            // Remove the newline added by fgets()
+            s[count].name[strcspn(s[count].name, "\n")] = '\0';
+
+            // empty name
+            if (strlen(s[count].name) == 0)
+            {
+                printf("\nName cannot be empty!");
+                break;
+            }
+
+            // Set default route and validity
+            strcpy(s[count].route, "Not Selected");
+            s[count].validity = 0;
+
+            printf("\nRegistration successful!");
+            printf("\nStudent ID: %d", s[count].id);
+
+            count++; 
+            break;
+
+        case 2:
+            // Generate and display a bus pass
+            printf("\nEnter Student ID: ");
+
+            if (scanf("%d", &id) != 1)
+            {
+                printf("\nInvalid ID!");
+                while (getchar() != '\n')
+                    ;
+                break;
+            }
+
+            found = 0;
+
+            // Search for the student
+            for (i = 0; i < count; i++)
+            {
+                if (s[i].id == id)
+                {
+                    printf("\n--- BUS PASS ---");
+                    printf("\nID: %d", s[i].id);
+                    printf("\nName: %s", s[i].name);
+                    printf("\nRoute: %s", s[i].route);
+
+                    if (s[i].validity > 0)
+                        printf("\nValidity: %d days",
+                               s[i].validity);
+                    else
+                        printf("\nPass is not active.");
+
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found)
+                printf("\nStudent not found!");
+
+            break;
+
+        case 3:
+            // Select a route for a student
+            printf("\nEnter Student ID: ");
+
+            if (scanf("%d", &id) != 1)
+            {
+                printf("\nInvalid ID!");
+                while (getchar() != '\n')
+                    ;
+                break;
+            }
+
+            found = 0;
+
+            for (i = 0; i < count; i++)
+            {
+                if (s[i].id == id)
+                {
+                    printf("\n1. College to City");
+                    printf("\n2. College to Railway Station");
+                    printf("\n3. College to Bus Stand");
+                    printf("\nSelect route: ");
+
+                    if (scanf("%d", &routeChoice) != 1)
+                    {
+                        printf("\nInvalid route input!");
+                        while (getchar() != '\n')
+                            ;
+                        found = 1;
+                        break;
+                    }
+
+                    // Save the selected route
+                    switch (routeChoice)
+                    {
+                    case 1:
+                        strcpy(s[i].route,
+                               "College to City");
+                        break;
+
+                    case 2:
+                        strcpy(s[i].route,
+                               "College to Railway Station");
+                        break;
+
+                    case 3:
+                        strcpy(s[i].route,
+                               "College to Bus Stand");
+                        break;
+
+                    default:
+                        printf("\nInvalid route!");
+                        break;
+                    }
+
+                    if (routeChoice >= 1 &&
+                        routeChoice <= 3)
+                    {
+                        printf("\nRoute selected successfully!");
+                    }
+
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found)
+                printf("\nStudent not found!");
+
+            break;
+
+        case 4:
+            // Check pass validity
+            printf("\nEnter Student ID: ");
+
+            if (scanf("%d", &id) != 1)
+            {
+                printf("\nInvalid ID!");
+                while (getchar() != '\n')
+                    ;
+                break;
+            }
+
+            found = 0;
+
+            for (i = 0; i < count; i++)
+            {
+                if (s[i].id == id)
+                {
+                    if (s[i].validity > 0)
+                        printf("\nPass is active for %d days.",
+                               s[i].validity);
+                    else
+                        printf("\nPass is not active.");
+
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found)
+                printf("\nStudent not found!");
+
+            break;
+
+        case 5:
+            // Renew a student's bus pass
+            printf("\nEnter Student ID: ");
+
+            if (scanf("%d", &id) != 1)
+            {
+                printf("\nInvalid ID!");
+                while (getchar() != '\n')
+                    ;
+                break;
+            }
+
+            found = 0;
+
+            for (i = 0; i < count; i++)
+            {
+                if (s[i].id == id)
+                {
+                    // Route selection is required before renewal
+                    if (strcmp(s[i].route,
+                               "Not Selected") == 0)
+                    {
+                        printf("\nPlease select a route first.");
+                    }
+                    else
+                    {
+                        printf("\nEnter validity in days: ");
+
+                        if (scanf("%d", &days) != 1)
+                        {
+                            printf("\nInvalid input!");
+                            while (getchar() != '\n')
+                                ;
+                            found = 1;
+                            break;
+                        }
+
+                        // Accept only positive validity
+                        if (days > 0)
+                        {
+                            s[i].validity = days;
+                            printf("\nPass renewed successfully!");
+                        }
+                        else
+                        {
+                            printf("\nValidity must be positive.");
+                        }
+                    }
+
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found)
+                printf("\nStudent not found!");
+
+            break;
+
+        case 6:
+            // Display all registered students
+            printf("\n--- REGISTERED STUDENTS ---");
+
+            if (count == 0)
+            {
+                printf("\nNo students registered yet.");
+            }
+
+            for (i = 0; i < count; i++)
+            {
+                printf("\n\nID: %d", s[i].id);
+                printf("\nName: %s", s[i].name);
+                printf("\nRoute: %s", s[i].route);
+                printf("\nValidity: %d days",
+                       s[i].validity);
+            }
+
+            break;
+
+        case 7:
+            printf("\nThank you for using the system!");
+            break;
+
+        default:
+            printf("\nInvalid choice! Select 1 to 7.");
+        }
+
+    } while (choice != 7);
+
+    return 0; // End program successfully
+}
